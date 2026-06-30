@@ -1,0 +1,22 @@
+[pack]
+name = "deep-research"
+namespace = "research"
+version = "0.1.0"
+protocol = "pack-protocol/0.1"
+min_nevoflux = "0.3.0"
+description = "STORM/Co-STORM deep research: 5-perspective scan, contradiction map, synthesis, peer review — filed into your brain."
+license = "MIT"
+authors = ["NevoFlux"]
+
+# Single `research` skill (triggers /research) + its conventions/.
+# It reaches all gbrain / browser_* / ask_user tools at runtime via
+# tool_search → tool_call_dynamic, so allowed_tools stays minimal (see SKILL.md).
+[components.skills]
+dir = "components/skills"
+
+# Generated research pages (research/<topic>/…) are the user's data — keep them on
+# uninstall. No [[components.seed]] (the pack ships no starter pages), so the
+# Seed ⊆ Protected invariant is trivially satisfied. No [components.config] and no
+# [components.dashboard] in v0.1 (the brief renders via runtime create_artifact instead).
+[components.protected]
+prefixes = ["research/"]
