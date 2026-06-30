@@ -1,0 +1,16 @@
+stop-slop
+Copyright (c) 2026 dorisgyl
+
+This pack adapts content from two upstream projects, both MIT licensed:
+
+- hardikpandya/stop-slop
+  Copyright (c) 2025 Hardik Pandya
+  https://github.com/hardikpandya/stop-slop
+  Source of: skills/no-slop/references/en-*.md and the English core rules.
+
+- pencil20388-eng/stop-slop-zh
+  Copyright (c) 2026 AdsPower Content Team
+  https://github.com/pencil20388-eng/stop-slop-zh
+  Source of: skills/no-slop/references/zh-*.md and the Chinese core rules.
+
+Both upstream LICENSE texts are reproduced in LICENSE.

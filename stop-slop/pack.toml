@@ -1,0 +1,15 @@
+[pack]
+name = "stop-slop"
+version = "0.1.0"
+description = "去掉 AI 写作味的双语 skill，中英文各一套规则。Remove AI writing tells, bilingual zh+en."
+license = "MIT"
+authors = [
+    "dorisgyl",
+    "Hardik Pandya <stop-slop, MIT>",
+    "AdsPower Content Team <stop-slop-zh, MIT>",
+]
+protocol = "pack-protocol/0.1"
+min_nevoflux = "0.3.0"
+
+[components.skills]
+dir = "skills"
