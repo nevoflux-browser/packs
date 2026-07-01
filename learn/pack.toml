@@ -1,0 +1,21 @@
+[pack]
+name = "learn"
+version = "0.1.0"
+protocol = "pack-protocol/0.1"
+min_nevoflux = "0.3.0"
+description = "Learn from any source (page/URL/tabs/GitHub skills/web portals/local/GBrain) and generate a capability-valid NevoFlux pack in a directory you choose — a pure generator, no install."
+license = "MIT"
+authors = ["dorisgyl"]
+
+# Single `learn` skill (triggers /learn) + its references/ + scripts/.
+# Must run in AGENT mode — it writes files (read/write/glob/bash are agent-mode tools).
+# The skill reaches gbrain/browser/MCP tools via tool_call_dynamic; file/exec tools are
+# called by their native names DIRECTLY (they are NOT reachable via tool_call_dynamic).
+# See SKILL.md and references/pack-authoring.md.
+[components.skills]
+dir = "components/skills"
+
+# No [components.seed] / [components.protected] / [components.config] /
+# [components.knowledge] / [components.dashboard]: learn files nothing of its own into
+# GBrain — it only writes generated pack files to a user-chosen directory. namespace
+# therefore defaults to the pack name and is unused.
