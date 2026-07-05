@@ -44,6 +44,12 @@ MIN="$(field min_nevoflux)"; NS="$(field namespace)"; [ -n "$NS" ] || NS="$NAME"
 if has '^\[components\.config\]';    then err "[components.config] is forbidden (invariant 2)"; fi
 if has '^\[components\.knowledge\]'; then err "[components.knowledge] is rejected at install — do not generate it"; fi
 
+# ---- seed shape: must be [[components.seed]] entries (slug+from), not a single [components.seed] table ----
+# (the single-table form with a `dir` key fails Manifest::parse: "invalid type: map, expected a sequence")
+if grep -qE '^\[components\.seed\][[:space:]]*$' "$TOML" 2>/dev/null; then
+  err "[components.seed] must be [[components.seed]] entries (slug + from per page), not a single table; 'dir' is skills-only — this fails Manifest::parse (BAD_MANIFEST)"
+fi
+
 # ---- invariant 1: source paths must be safe-relative ----
 while IFS= read -r p; do
   [ -n "$p" ] || continue

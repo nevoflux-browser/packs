@@ -1,7 +1,7 @@
 ---
 name: learn
-description: Learn from any source — the current page, a URL, multiple tabs, GitHub skill repos, web skill portals, local files, or GBrain — and generate a capability-valid NevoFlux pack in a directory you choose. A pure generator: it writes files only, it does not install. Runs in agent mode. Use for "learn a skill that does X", "turn this into a pack", 学一个 X 的 skill, 把这个做成 pack.
-version: "0.1.0"
+description: Learn from any source — the current page, a URL, multiple tabs, GitHub skill repos, web skill portals, local files, or GBrain — and generate a capability-valid NevoFlux pack in a directory you choose. A pure generator that writes files only and never installs. Runs in agent mode. Use for "learn a skill that does X", "turn this into a pack", 学一个 X 的 skill, 把这个做成 pack.
+version: "0.1.1"
 author: dorisgyl
 tags: [meta, pack, skill, generator, learn, capability]
 enabled: true
@@ -116,7 +116,9 @@ Don't:
 - **Route `read`/`write`/`glob`/`bash` through `tool_call_dynamic`** — returns `unknown tool`, silent failure.
 - **Emit `read_file`/`write_file`/`run_command` into a generated pack** — those are ACP/MCP-layer names;
   generated packs run on the native agent (`read`/`write`/`glob`/`bash`).
-- **Generate `[components.knowledge]`** — install hard-rejects it; use `[components.seed]`.
+- **Generate `[components.knowledge]`** — install hard-rejects it; use `[[components.seed]]` instead.
+- **Declare seed as `[components.seed] dir=…`** — seed is `[[components.seed]]` (slug + from per page);
+  `dir` is skills-only. The single-table form fails `Manifest::parse` (`BAD_MANIFEST`).
 - **Ship a half pack when a referenced file couldn't be fetched** — surface the gap, let the user decide.
 - **Trust a mental capability check** — the real `nevoflux pack validate` is the delivery gate.
 - **Pick the output directory yourself, or install the pack** — ask for the dir; hand install back to the user.

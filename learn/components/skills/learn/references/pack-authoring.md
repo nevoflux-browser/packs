@@ -56,7 +56,16 @@ Note: `ns = namespace()` = explicit `namespace`, else `pack.name`.
 ## Components: allowed vs forbidden
 
 - `[components.skills]` — the workhorse; almost always present.
-- `[components.seed]` — starter KB pages (route domain knowledge here). Must be protected (invariant 4).
+- `[[components.seed]]` — starter KB pages, **array-of-tables: one entry per page with `slug` + `from`**
+  (route domain knowledge here). Must be protected (invariant 4). ⚠️ **Never** write `[components.seed]
+  dir = "…"` — `dir` is skills-only; the single-table form fails `Manifest::parse` ("invalid type: map,
+  expected a sequence" → `BAD_MANIFEST`). Shape:
+  ```toml
+  [[components.seed]]
+  slug = "<ns>/overview"
+  from = "seed/overview.md"
+  # … one block per page …
+  ```
 - `[components.canvas_tools]` — tool TOML files, when the material needs them.
 - `[components.dashboard]` — only if the material is a displayable panel (invariant 5).
 - `[components.protected]` — declare alongside any seed.
@@ -115,7 +124,7 @@ doesn't touch it). One entry per source:
 ```json
 {
   "provenance_version": "1",
-  "generated_by": "learn/0.1.0",
+  "generated_by": "learn/0.1.1",
   "sources": [
     { "source": "github:owner/repo/sub@ref", "license": "MIT",
       "license_source": "repo-root LICENSE", "mode": "rewrite", "content_sha256": "..." },
@@ -137,5 +146,7 @@ nevoflux pack validate <output-dir>/<pack-name>/pack.toml   # static check, no w
 
 Parse the violations; if not clean, fix and regenerate — loop until clean. If the `nevoflux` CLI isn't
 on PATH, fall back to the bundled `scripts/validate-pack.sh <dir>` (a bash approximation of the 5
-invariants; the CLI is authoritative). This checklist is *generation guidance*; the validator is the
-gate.
+invariants; the CLI is authoritative). **The bash mirror is lexical — it can miss manifest *schema*
+errors (e.g. a malformed `[components.seed]` table), so a mirror PASS is not a guarantee; prefer the real
+CLI and treat the mirror as a last resort.** This checklist is *generation guidance*; the validator is
+the gate — never deliver a pack you haven't actually validated.

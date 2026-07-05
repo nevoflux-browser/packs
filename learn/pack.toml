@@ -1,6 +1,6 @@
 [pack]
 name = "learn"
-version = "0.1.0"
+version = "0.1.1"
 protocol = "pack-protocol/0.1"
 min_nevoflux = "0.3.0"
 description = "Learn from any source (page/URL/tabs/GitHub skills/web portals/local/GBrain) and generate a capability-valid NevoFlux pack in a directory you choose — a pure generator, no install."
