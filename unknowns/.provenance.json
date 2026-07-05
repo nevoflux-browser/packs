@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-07-04",
+  "generator": "learn skill",
+  "sources": [
+    {
+      "type": "article",
+      "title": "A Field Guide to Fable: Finding Your Unknowns",
+      "author": "Thariq",
+      "url": "https://thariq.io/blog/field-guide-to-fable/",
+      "license": "unknown",
+      "license_source": "no LICENSE file found, no license in article",
+      "processing_mode": "pure-learning"
+    },
+    {
+      "type": "local_document",
+      "path": "C:\\Users\\Docker\\nevoflux\\docs\\unknowns-pack\\decisions.md",
+      "title": "Unknowns Pack Design Decisions",
+      "license": "MIT",
+      "license_source": "original design document by pack author",
+      "processing_mode": "original"
+    }
+  ],
+  "notes": "All content is original, fully generalized from coding to universal thinking toolkit. No direct text copied from source article. Inspired-by attribution included in pack description and all seed pages."
+}

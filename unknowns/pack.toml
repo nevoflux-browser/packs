@@ -1,0 +1,51 @@
+[pack]
+name = "unknowns"
+namespace = "unknowns"
+version = "0.1.0"
+protocol = "pack-protocol/0.1"
+min_nevoflux = "0.3.0"
+description = "A universal thinking toolkit for discovering what you don't know you don't know. 8 techniques across 4 cognitive stages (Discovery, Research, Execution, Communication). Inspired by Thariq's 'A Field Guide to Fable: Finding Your Unknowns'."
+license = "MIT"
+authors = ["NevoFlux"]
+
+[components.skills]
+dir = "skills"
+
+[[components.seed]]
+slug = "unknowns/overview"
+from = "seed/overview.md"
+
+[[components.seed]]
+slug = "unknowns/blind-spot-pass"
+from = "seed/blind-spot-pass.md"
+
+[[components.seed]]
+slug = "unknowns/brainstorming"
+from = "seed/brainstorming.md"
+
+[[components.seed]]
+slug = "unknowns/interviews"
+from = "seed/interviews.md"
+
+[[components.seed]]
+slug = "unknowns/notes"
+from = "seed/notes.md"
+
+[[components.seed]]
+slug = "unknowns/pitches"
+from = "seed/pitches.md"
+
+[[components.seed]]
+slug = "unknowns/plans"
+from = "seed/plans.md"
+
+[[components.seed]]
+slug = "unknowns/quizzes"
+from = "seed/quizzes.md"
+
+[[components.seed]]
+slug = "unknowns/references"
+from = "seed/references.md"
+
+[components.protected]
+prefixes = ["unknowns/"]
