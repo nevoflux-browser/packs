@@ -1,7 +1,7 @@
 ---
 name: unknowns
 description: "A universal thinking toolkit for discovering what you don't know. Entry point that routes to 8 techniques across 4 cognitive stages: Discovery (blind-spot-pass, brainstorming), Research (interviews, references), Execution (plans, notes), Communication (pitches, quizzes). Use /unknowns for guided triage or /unknowns:<technique> for direct access. Generates a cognitive map dashboard with conversation-level progress tracking."
-version: "0.1.0"
+version: "0.1.1"
 author: "NevoFlux"
 tags: [thinking, unknowns, cognitive, discovery, brainstorming, planning, metacognition]
 enabled: true
@@ -66,15 +66,23 @@ Based on their answer, determine which cognitive stage they're in and recommend 
 
 Present the recommendation with a one-sentence explanation of why, plus the slash command to invoke it.
 
-### Step 3 — Dashboard (on request)
+### Step 3 — Cognitive map (on request)
 
-If the user asks to see the cognitive map or progress, generate a dashboard artifact showing:
+If the user asks to see the cognitive map or progress, render it with `create_artifact`
+(`content_type: "text/html"`, artifact id starting with `unknowns`) — **from the shipped template, not
+ad-hoc HTML**:
 
-- The 4-stage pipeline (Discovery → Research → Execution → Communication)
-- All 8 techniques with their status (done / not done) in this conversation
-- Clickable technique names that show the slash command
+1. **Read the template:** `skill_read('unknowns', 'references/cognitive-map-template.html')`. It already
+   contains the 4-stage → 8-technique layout, the progress bar, and a **5-theme picker**
+   (Copper & Sage / Ocean Depth / Sand Dune / Neon Noir / Ivory Paper) the user clicks to switch, all
+   self-contained.
+2. **Only edit the status:** for each technique the user has used **this conversation**, add the `done`
+   class to that technique's `.card` (cards carry `data-technique="<name>"`, e.g. `blind-spot-pass`).
+   Change nothing else — keep all 5 theme buttons and the `<script>`; the progress bar and checkmarks
+   recompute on load.
+3. `create_artifact` with the filled-in HTML.
 
-Use `create_artifact` to render the dashboard. The artifact ID must start with `unknowns`.
+**Let the user pick the theme** — keep the 5-button bar; never hard-select one for them.
 
 ## Cross-skill orchestration
 

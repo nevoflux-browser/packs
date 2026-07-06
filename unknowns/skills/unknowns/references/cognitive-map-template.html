@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!--
+  Unknowns — Cognitive Map template (5 themes, user-switchable).
+  AGENT: to render the runtime cognitive map, read this file, then ONLY mark status —
+  add the class "done" to the .card of each technique the user has used THIS conversation
+  (cards carry data-technique="<name>"). Change nothing else: keep all 5 theme buttons and
+  the <script>; the progress bar + checks recompute on load. Then create_artifact this HTML
+  (content_type "text/html", artifact id starting with "unknowns"). Do NOT hard-pick a theme —
+  the 5-button bar lets the user choose.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unknowns — Cognitive Map</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;transition:background .4s,color .4s}
+
+/* Theme switcher bar */
+.theme-bar{display:flex;gap:0;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(128,128,128,.2)}
+.theme-btn{flex:1;padding:14px 8px;border:none;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:all .3s;position:relative}
+.theme-btn.active::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:3px;border-radius:2px;background:currentColor;opacity:.6}
+
+/* Layout */
+.container{max-width:720px;margin:0 auto;padding:32px 20px}
+h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.subtitle{font-size:13px;opacity:.5;margin-bottom:32px}
+.progress-bar{height:4px;border-radius:2px;margin-bottom:36px;overflow:hidden;position:relative}
+.progress-fill{height:100%;width:0%;border-radius:2px;transition:background .4s,width .4s}
+
+/* Stage */
+.stage{margin-bottom:28px;position:relative;padding-left:28px}
+.stage::before{content:'';position:absolute;left:8px;top:28px;bottom:-28px;width:1px;opacity:.15}
+.stage:last-child::before{display:none}
+.stage-dot{position:absolute;left:3px;top:10px;width:11px;height:11px;border-radius:50%;border:2px solid;opacity:.6}
+.stage-header{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.stage-name{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.stage-meta{font-size:11px;opacity:.4;font-style:italic}
+
+/* Cards */
+.cards{display:flex;flex-wrap:wrap;gap:8px}
+.card{flex:1 1 calc(50% - 4px);min-width:200px;padding:14px 16px;border-radius:8px;cursor:pointer;transition:all .25s;position:relative;border:1px solid transparent}
+.card:hover{transform:translateY(-2px)}
+.card.done{opacity:.85}
+.card.done .card-check{opacity:1;transform:scale(1)}
+.card-check{position:absolute;top:8px;right:10px;font-size:14px;opacity:0;transform:scale(0);transition:all .25s}
+.card-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.card-desc{font-size:11px;opacity:.5;line-height:1.4}
+.card-cmd{font-size:10px;opacity:.3;margin-top:6px;font-family:monospace}
+
+/* Reset */
+.reset-btn{display:block;margin:20px auto 0;padding:8px 20px;border:1px solid;border-radius:6px;background:transparent;cursor:pointer;font-size:12px;opacity:.4;transition:opacity .2s}
+.reset-btn:hover{opacity:.7}
+
+/* ===== THEMES ===== */
+
+/* 1 — Copper & Sage */
+body.t-copper{background:#1a1812;color:#d4c9b0}
+.t-copper .theme-btn:nth-child(1){background:#2a2418;color:#c4a36f}
+.t-copper .stages .stage:nth-child(1) .stage-name,.t-copper .stages .stage:nth-child(1) .stage-dot{color:#c4a36f;border-color:#c4a36f}
+.t-copper .stages .stage:nth-child(1) .card{background:#2a2418;border-color:#3a3020}
+.t-copper .stages .stage:nth-child(1) .card:hover{border-color:#c4a36f;box-shadow:0 4px 16px rgba(196,163,111,.1)}
+.t-copper .stages .stage:nth-child(2) .stage-name,.t-copper .stages .stage:nth-child(2) .stage-dot{color:#7a9e7e;border-color:#7a9e7e}
+.t-copper .stages .stage:nth-child(2) .card{background:#1a2419;border-color:#253024}
+.t-copper .stages .stage:nth-child(2) .card:hover{border-color:#7a9e7e;box-shadow:0 4px 16px rgba(122,158,126,.1)}
+.t-copper .stages .stage:nth-child(3) .stage-name,.t-copper .stages .stage:nth-child(3) .stage-dot{color:#c47f6f;border-color:#c47f6f}
+.t-copper .stages .stage:nth-child(3) .card{background:#2a1c18;border-color:#3a2820}
+.t-copper .stages .stage:nth-child(3) .card:hover{border-color:#c47f6f;box-shadow:0 4px 16px rgba(196,127,111,.1)}
+.t-copper .stages .stage:nth-child(4) .stage-name,.t-copper .stages .stage:nth-child(4) .stage-dot{color:#a08cb8;border-color:#a08cb8}
+.t-copper .stages .stage:nth-child(4) .card{background:#221e2a;border-color:#302838}
+.t-copper .stages .stage:nth-child(4) .card:hover{border-color:#a08cb8;box-shadow:0 4px 16px rgba(160,140,184,.1)}
+.t-copper .progress-bar{background:#2a2418}
+.t-copper .progress-fill{background:linear-gradient(90deg,#c4a36f,#7a9e7e)}
+.t-copper .stage::before{background:#d4c9b0}
+.t-copper .card.done .card-check{color:#7a9e7e}
+.t-copper .reset-btn{color:#d4c9b0;border-color:#3a3020}
+
+/* 2 — Ocean Depth */
+body.t-ocean{background:#0d1117;color:#b8c9d8}
+.t-ocean .theme-btn:nth-child(2){background:#0d1117;color:#58a6ff}
+.t-ocean .stages .stage:nth-child(1) .stage-name,.t-ocean .stages .stage:nth-child(1) .stage-dot{color:#f0883e;border-color:#f0883e}
+.t-ocean .stages .stage:nth-child(1) .card{background:#161b22;border-color:#21262d}
+.t-ocean .stages .stage:nth-child(1) .card:hover{border-color:#f0883e;box-shadow:0 4px 16px rgba(240,136,62,.08)}
+.t-ocean .stages .stage:nth-child(2) .stage-name,.t-ocean .stages .stage:nth-child(2) .stage-dot{color:#58a6ff;border-color:#58a6ff}
+.t-ocean .stages .stage:nth-child(2) .card{background:#161b22;border-color:#21262d}
+.t-ocean .stages .stage:nth-child(2) .card:hover{border-color:#58a6ff;box-shadow:0 4px 16px rgba(88,166,255,.08)}
+.t-ocean .stages .stage:nth-child(3) .stage-name,.t-ocean .stages .stage:nth-child(3) .stage-dot{color:#3fb950;border-color:#3fb950}
+.t-ocean .stages .stage:nth-child(3) .card{background:#161b22;border-color:#21262d}
+.t-ocean .stages .stage:nth-child(3) .card:hover{border-color:#3fb950;box-shadow:0 4px 16px rgba(63,185,80,.08)}
+.t-ocean .stages .stage:nth-child(4) .stage-name,.t-ocean .stages .stage:nth-child(4) .stage-dot{color:#bc8cff;border-color:#bc8cff}
+.t-ocean .stages .stage:nth-child(4) .card{background:#161b22;border-color:#21262d}
+.t-ocean .stages .stage:nth-child(4) .card:hover{border-color:#bc8cff;box-shadow:0 4px 16px rgba(188,140,255,.08)}
+.t-ocean .progress-bar{background:#161b22}
+.t-ocean .progress-fill{background:linear-gradient(90deg,#f0883e,#58a6ff,#3fb950)}
+.t-ocean .stage::before{background:#b8c9d8}
+.t-ocean .card.done .card-check{color:#3fb950}
+.t-ocean .reset-btn{color:#b8c9d8;border-color:#21262d}
+
+/* 3 — Sand Dune (light) */
+body.t-sand{background:#f5f0e8;color:#3a3530}
+.t-sand .theme-btn:nth-child(3){background:#f5f0e8;color:#8b6914}
+.t-sand .stages .stage:nth-child(1) .stage-name,.t-sand .stages .stage:nth-child(1) .stage-dot{color:#b8860b;border-color:#b8860b}
+.t-sand .stages .stage:nth-child(1) .card{background:#fff;border-color:#e8e0d0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.t-sand .stages .stage:nth-child(1) .card:hover{border-color:#b8860b;box-shadow:0 4px 12px rgba(184,134,11,.1)}
+.t-sand .stages .stage:nth-child(2) .stage-name,.t-sand .stages .stage:nth-child(2) .stage-dot{color:#2e7d6e;border-color:#2e7d6e}
+.t-sand .stages .stage:nth-child(2) .card{background:#fff;border-color:#e8e0d0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.t-sand .stages .stage:nth-child(2) .card:hover{border-color:#2e7d6e;box-shadow:0 4px 12px rgba(46,125,110,.1)}
+.t-sand .stages .stage:nth-child(3) .stage-name,.t-sand .stages .stage:nth-child(3) .stage-dot{color:#a0522d;border-color:#a0522d}
+.t-sand .stages .stage:nth-child(3) .card{background:#fff;border-color:#e8e0d0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.t-sand .stages .stage:nth-child(3) .card:hover{border-color:#a0522d;box-shadow:0 4px 12px rgba(160,82,45,.1)}
+.t-sand .stages .stage:nth-child(4) .stage-name,.t-sand .stages .stage:nth-child(4) .stage-dot{color:#6a5acd;border-color:#6a5acd}
+.t-sand .stages .stage:nth-child(4) .card{background:#fff;border-color:#e8e0d0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.t-sand .stages .stage:nth-child(4) .card:hover{border-color:#6a5acd;box-shadow:0 4px 12px rgba(106,90,205,.1)}
+.t-sand .progress-bar{background:#e8e0d0}
+.t-sand .progress-fill{background:linear-gradient(90deg,#b8860b,#2e7d6e)}
+.t-sand .stage::before{background:#3a3530}
+.t-sand .card.done .card-check{color:#2e7d6e}
+.t-sand .reset-btn{color:#3a3530;border-color:#d8d0c0}
+
+/* 4 — Neon Noir */
+body.t-neon{background:#0a0a0f;color:#e0e0e8}
+.t-neon .theme-btn:nth-child(4){background:#0a0a0f;color:#ff6b9d}
+.t-neon .stages .stage:nth-child(1) .stage-name,.t-neon .stages .stage:nth-child(1) .stage-dot{color:#ff6b9d;border-color:#ff6b9d}
+.t-neon .stages .stage:nth-child(1) .card{background:#12121a;border-color:#1e1e2a}
+.t-neon .stages .stage:nth-child(1) .card:hover{border-color:#ff6b9d;box-shadow:0 0 20px rgba(255,107,157,.12)}
+.t-neon .stages .stage:nth-child(2) .stage-name,.t-neon .stages .stage:nth-child(2) .stage-dot{color:#4ecdc4;border-color:#4ecdc4}
+.t-neon .stages .stage:nth-child(2) .card{background:#12121a;border-color:#1e1e2a}
+.t-neon .stages .stage:nth-child(2) .card:hover{border-color:#4ecdc4;box-shadow:0 0 20px rgba(78,205,196,.12)}
+.t-neon .stages .stage:nth-child(3) .stage-name,.t-neon .stages .stage:nth-child(3) .stage-dot{color:#ffd93d;border-color:#ffd93d}
+.t-neon .stages .stage:nth-child(3) .card{background:#12121a;border-color:#1e1e2a}
+.t-neon .stages .stage:nth-child(3) .card:hover{border-color:#ffd93d;box-shadow:0 0 20px rgba(255,217,61,.12)}
+.t-neon .stages .stage:nth-child(4) .stage-name,.t-neon .stages .stage:nth-child(4) .stage-dot{color:#c084fc;border-color:#c084fc}
+.t-neon .stages .stage:nth-child(4) .card{background:#12121a;border-color:#1e1e2a}
+.t-neon .stages .stage:nth-child(4) .card:hover{border-color:#c084fc;box-shadow:0 0 20px rgba(192,132,252,.12)}
+.t-neon .progress-bar{background:#12121a}
+.t-neon .progress-fill{background:linear-gradient(90deg,#ff6b9d,#4ecdc4,#ffd93d,#c084fc)}
+.t-neon .stage::before{background:#e0e0e8}
+.t-neon .card.done .card-check{color:#4ecdc4}
+.t-neon .reset-btn{color:#e0e0e8;border-color:#1e1e2a}
+
+/* 5 — Ivory Paper (light) */
+body.t-ivory{background:#fafaf7;color:#2c2c2c}
+.t-ivory .theme-btn:nth-child(5){background:#fafaf7;color:#2c2c2c}
+.t-ivory .stages .stage:nth-child(1) .stage-name,.t-ivory .stages .stage:nth-child(1) .stage-dot{color:#d45d00;border-color:#d45d00}
+.t-ivory .stages .stage:nth-child(1) .card{background:#fff;border-color:#eee;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.t-ivory .stages .stage:nth-child(1) .card:hover{border-color:#d45d00;box-shadow:0 2px 8px rgba(212,93,0,.1)}
+.t-ivory .stages .stage:nth-child(2) .stage-name,.t-ivory .stages .stage:nth-child(2) .stage-dot{color:#1a6b5a;border-color:#1a6b5a}
+.t-ivory .stages .stage:nth-child(2) .card{background:#fff;border-color:#eee;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.t-ivory .stages .stage:nth-child(2) .card:hover{border-color:#1a6b5a;box-shadow:0 2px 8px rgba(26,107,90,.1)}
+.t-ivory .stages .stage:nth-child(3) .stage-name,.t-ivory .stages .stage:nth-child(3) .stage-dot{color:#b44d2e;border-color:#b44d2e}
+.t-ivory .stages .stage:nth-child(3) .card{background:#fff;border-color:#eee;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.t-ivory .stages .stage:nth-child(3) .card:hover{border-color:#b44d2e;box-shadow:0 2px 8px rgba(180,77,46,.1)}
+.t-ivory .stages .stage:nth-child(4) .stage-name,.t-ivory .stages .stage:nth-child(4) .stage-dot{color:#5746a0;border-color:#5746a0}
+.t-ivory .stages .stage:nth-child(4) .card{background:#fff;border-color:#eee;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.t-ivory .stages .stage:nth-child(4) .card:hover{border-color:#5746a0;box-shadow:0 2px 8px rgba(87,70,160,.1)}
+.t-ivory .progress-bar{background:#eee}
+.t-ivory .progress-fill{background:linear-gradient(90deg,#d45d00,#1a6b5a)}
+.t-ivory .stage::before{background:#2c2c2c}
+.t-ivory .card.done .card-check{color:#1a6b5a}
+.t-ivory .reset-btn{color:#2c2c2c;border-color:#ddd}
+
+/* Default unthemed buttons */
+.theme-btn{background:#1a1a1a;color:#888}
+.t-copper .theme-btn,.t-ocean .theme-btn,.t-sand .theme-btn,.t-neon .theme-btn,.t-ivory .theme-btn{background:transparent;opacity:.5}
+.t-copper .theme-btn:nth-child(1),.t-ocean .theme-btn:nth-child(2),.t-sand .theme-btn:nth-child(3),.t-neon .theme-btn:nth-child(4),.t-ivory .theme-btn:nth-child(5){opacity:1}
+</style>
+</head>
+<body class="t-copper">
+
+<div class="theme-bar">
+  <button class="theme-btn active" onclick="setTheme('copper',this)">Copper &amp; Sage</button>
+  <button class="theme-btn" onclick="setTheme('ocean',this)">Ocean Depth</button>
+  <button class="theme-btn" onclick="setTheme('sand',this)">Sand Dune</button>
+  <button class="theme-btn" onclick="setTheme('neon',this)">Neon Noir</button>
+  <button class="theme-btn" onclick="setTheme('ivory',this)">Ivory Paper</button>
+</div>
+
+<div class="container">
+  <h1>Unknowns</h1>
+  <p class="subtitle">A thinking toolkit for discovering what you don't know you don't know</p>
+  <div class="progress-bar"><div class="progress-fill"></div></div>
+
+  <div class="stages">
+  <!-- Discovery -->
+  <div class="stage">
+    <div class="stage-dot"></div>
+    <div class="stage-header">
+      <span class="stage-name">Discovery</span>
+      <span class="stage-meta">What haven't I considered?</span>
+    </div>
+    <div class="cards">
+      <div class="card" data-technique="blind-spot-pass" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">Blind Spot Pass</div>
+        <div class="card-desc">Multi-perspective scan for the gaps you missed</div>
+        <div class="card-cmd">/unknowns:blind-spot-pass</div>
+      </div>
+      <div class="card" data-technique="brainstorming" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">Brainstorming</div>
+        <div class="card-desc">Generate options to surface preferences you can't articulate</div>
+        <div class="card-cmd">/unknowns:brainstorming</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Research -->
+  <div class="stage">
+    <div class="stage-dot"></div>
+    <div class="stage-header">
+      <span class="stage-name">Research</span>
+      <span class="stage-meta">What exists that I don't know about?</span>
+    </div>
+    <div class="cards">
+      <div class="card" data-technique="interviews" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">Interviews</div>
+        <div class="card-desc">Role-play perspectives to reveal blind spots</div>
+        <div class="card-cmd">/unknowns:interviews</div>
+      </div>
+      <div class="card" data-technique="references" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">References</div>
+        <div class="card-desc">Find and analyze existing examples and prior art</div>
+        <div class="card-cmd">/unknowns:references</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Execution -->
+  <div class="stage">
+    <div class="stage-dot"></div>
+    <div class="stage-header">
+      <span class="stage-name">Execution</span>
+      <span class="stage-meta">How do I organize and track what I know?</span>
+    </div>
+    <div class="cards">
+      <div class="card" data-technique="plans" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">Plans</div>
+        <div class="card-desc">Turn ideas into prioritized, certainty-rated steps</div>
+        <div class="card-cmd">/unknowns:plans</div>
+      </div>
+      <div class="card" data-technique="notes" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">Notes</div>
+        <div class="card-desc">Record decisions and deviations during execution</div>
+        <div class="card-cmd">/unknowns:notes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Communication -->
+  <div class="stage">
+    <div class="stage-dot"></div>
+    <div class="stage-header">
+      <span class="stage-name">Communication</span>
+      <span class="stage-meta">Can I explain and defend what I've done?</span>
+    </div>
+    <div class="cards">
+      <div class="card" data-technique="pitches" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">Pitches</div>
+        <div class="card-desc">Package the work for a specific audience</div>
+        <div class="card-cmd">/unknowns:pitches</div>
+      </div>
+      <div class="card" data-technique="quizzes" onclick="toggle(this)">
+        <span class="card-check">✓</span>
+        <div class="card-title">Quizzes</div>
+        <div class="card-desc">Test understanding to expose knowledge gaps</div>
+        <div class="card-cmd">/unknowns:quizzes</div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">Reset all</button>
+</div>
+
+<script>
+function setTheme(t, btn) {
+  document.body.className = 't-' + t;
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggle(card) { card.classList.toggle('done'); updateProgress(); }
+function resetAll() { document.querySelectorAll('.card').forEach(c => c.classList.remove('done')); updateProgress(); }
+function updateProgress() {
+  var total = document.querySelectorAll('.card').length;
+  var done = document.querySelectorAll('.card.done').length;
+  document.querySelector('.progress-fill').style.width = (total ? done / total * 100 : 0) + '%';
+}
+updateProgress(); // reflect whatever the agent marked done
+</script>
+</body>
+</html>
