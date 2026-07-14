@@ -1,0 +1,67 @@
+[pack]
+name = "magick"
+namespace = "magick"
+version = "0.3.2"
+protocol = "pack-protocol/0.1"
+min_nevoflux = "0.3.0"
+description = "ImageMagick command-line image processing: browse image directories as thumbnail galleries, convert, resize, blur, crop, rotate, and batch-process images using the magick CLI."
+license = "unknown"
+authors = ["NevoFlux"]
+
+[components.skills]
+dir = "skills"
+
+[[components.seed]]
+slug = "magick/command-line-processing"
+from = "seed/command-line-processing.md"
+
+[[components.seed]]
+slug = "magick/common-operations"
+from = "seed/common-operations.md"
+
+[[components.seed]]
+slug = "magick/identify"
+from = "seed/identify.md"
+
+[[components.seed]]
+slug = "magick/mogrify"
+from = "seed/mogrify.md"
+
+[[components.seed]]
+slug = "magick/montage"
+from = "seed/montage.md"
+
+[[components.seed]]
+slug = "magick/composite"
+from = "seed/composite.md"
+
+[[components.seed]]
+slug = "magick/compare"
+from = "seed/compare.md"
+
+[[components.seed]]
+slug = "magick/animate"
+from = "seed/animate.md"
+
+[[components.seed]]
+slug = "magick/display"
+from = "seed/display.md"
+
+[[components.seed]]
+slug = "magick/import"
+from = "seed/import.md"
+
+[[components.seed]]
+slug = "magick/conjure"
+from = "seed/conjure.md"
+
+[[components.seed]]
+slug = "magick/stream"
+from = "seed/stream.md"
+
+[[components.seed]]
+slug = "magick/gemini-watermark"
+from = "seed/gemini-watermark.md"
+
+[components.protected]
+prefixes = ["magick/"]

@@ -1,0 +1,41 @@
+{
+  "provenance_version": "1",
+  "generated_by": "learn/0.1.1",
+  "sources": [
+    {
+      "source": "https://imagemagick.org/command-line-tools/",
+      "license": "unknown",
+      "license_source": "none found on page or domain root",
+      "mode": "pure-learning",
+      "notes": "ImageMagick command-line tools overview page. No explicit open-source license found for documentation. Seed content is synthesized/paraphrased, not copied verbatim."
+    },
+    {
+      "source": "https://imagemagick.org/command-line-processing/",
+      "license": "unknown",
+      "license_source": "none found on page or domain root",
+      "mode": "pure-learning",
+      "notes": "ImageMagick command-line processing reference (anatomy, input/output, geometry). Content synthesized."
+    },
+    {
+      "source": "https://imagemagick.org/command-line-options/",
+      "license": "unknown",
+      "license_source": "none found on page or domain root",
+      "mode": "pure-learning",
+      "notes": "ImageMagick command-line options reference page (276K+ chars, full option listing). Common-operations seed derived from this combined with general ImageMagick knowledge. Content synthesized."
+    },
+    {
+      "source": "https://imagemagick.org/animate/, https://imagemagick.org/compare/, https://imagemagick.org/composite/, https://imagemagick.org/conjure/, https://imagemagick.org/display/, https://imagemagick.org/identify/, https://imagemagick.org/import/, https://imagemagick.org/mogrify/, https://imagemagick.org/montage/, https://imagemagick.org/stream/",
+      "license": "unknown",
+      "license_source": "none found on page or domain root",
+      "mode": "pure-learning",
+      "notes": "Per-tool official documentation pages (fetched 2026-07-13; imagemagick.org moved these from /script/<tool>.php to /<tool>/). One seed page per sub-command (seed/animate.md ... seed/stream.md) synthesized from each tool's page combined with general ImageMagick knowledge. Content synthesized, not copied verbatim."
+    },
+    {
+      "source": "original empirical measurement (no external source)",
+      "license": "n/a",
+      "license_source": "n/a",
+      "mode": "pure-learning",
+      "notes": "seed/gemini-watermark.md: watermark placement rule (96x96px @ 192px bottom-right margin, 0.5x for small renders) measured 2026-07-14 across 8 Gemini/Imagen aspect-ratio samples with magick, plus the LaMa/IOPaint inpainting workflow validated locally. Original observations, not derived from any scraped source."
+    }
+  ]
+}
