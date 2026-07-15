@@ -5,7 +5,7 @@ version = "0.3.2"
 protocol = "pack-protocol/0.1"
 min_nevoflux = "0.3.0"
 description = "ImageMagick command-line image processing: browse image directories as thumbnail galleries, convert, resize, blur, crop, rotate, and batch-process images using the magick CLI."
-license = "unknown"
+license = "MIT"
 authors = ["NevoFlux"]
 
 [components.skills]
