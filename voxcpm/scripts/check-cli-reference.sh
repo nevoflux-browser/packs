@@ -9,6 +9,10 @@
 # （-t/-o/-i/-od/-ra/-pa/-pt/-m/-v 与其长 flag 的配对）只对 cli-reference.md 的表格
 # 格式有意义，继续只作用于该文件，不强加到散文页上。
 #
+# 微调页面里的真实训练/启动/监控命令会带其他工具自己的 flag（训练脚本的
+# --config_path、torchrun 的 --nproc_per_node、tensorboard 的 --logdir）——这些不是
+# voxcpm 编造的 flag，靠 EXTERNAL_TOOL_FLAGS 白名单逐条豁免（定义处有逐条说明）。
+#
 # 用法: bash voxcpm/scripts/check-cli-reference.sh
 # 退出: 0 = 一致, 1 = 不一致, 2 = 环境不可用（无法校验）
 
@@ -43,8 +47,13 @@ wait
 LIVE="$TMPDIR/live"
 cat "$TMPDIR/top" "$TMPDIR/design" "$TMPDIR/clone" "$TMPDIR/batch" "$TMPDIR/validate" > "$LIVE"
 
-# 抽长 flag：一行一个，去重。前导 [^-a-zA-Z0-9] 防止把 "--foo" 从 "---foo" 里抠出来
-extract_long() { grep -oE '(^|[^-a-zA-Z0-9])--[a-z][a-z0-9-]*' "$1" | grep -oE '\-\-[a-z][a-z0-9-]*' | sort -u; }
+# 抽长 flag：一行一个，去重。前导 [^-a-zA-Z0-9] 防止把 "--foo" 从 "---foo" 里抠出来。
+# 字符类包含下划线：外部工具（训练脚本、torchrun 等）的 flag 常用下划线命名
+# （--config_path、--nproc_per_node），若不含下划线，正则会在下划线处截断，把
+# --config_path 抽成 --config——这不是它们的真实名字，会让后面的比对失真。voxcpm
+# 自己的 flag 全部是连字符命名（--lora-r、--cache-dir 等，见 seed/cli-reference.md），
+# 从未用过下划线，所以把下划线纳入字符类不会让任何真实 voxcpm flag 被错误吸收或掩盖。
+extract_long() { grep -oE '(^|[^-a-zA-Z0-9_])--[a-z][a-z0-9_-]*' "$1" | grep -oE '\-\-[a-z][a-z0-9_-]*' | sort -u; }
 
 # 抽「长flag:短别名」配对，输出形如 "--output-dir:-od"。
 #   实测 help: argparse 把长短选项写在同一行 "--flag, -x"（后面跟 METAVAR 或换行），
@@ -64,6 +73,17 @@ in_file() { grep -qxF -- "$1" "$2"; }
 FAIL=0
 KNOWN_ABSENT="--seed --timestamps --timestamp-level --timestamp-language --retry-badcase --version"
 
+# 外部工具 flag 白名单：微调页面（finetune-config.md 等）必须给出真实可运行的训练/
+# 启动/监控命令，这些命令天然携带其他命令行工具自己的 flag，不是 voxcpm 编造的 flag。
+# 校验器只认识 voxcpm --help 的输出，看到这些会误判成「文档编造了 flag」，所以在此
+# 逐条登记豁免，并写清每条属于哪个工具、为什么会出现在 voxcpm 的文档里。
+# 这份清单要尽量精确：只列真正属于外部工具、且不与任何 voxcpm 自身 flag 同名的项，
+# 不能用通配豁免，否则会把编造的 voxcpm flag 也一起放过。
+EXTERNAL_TOOL_FLAGS="--config_path --nproc_per_node --logdir"
+#   --config_path    : scripts/train_voxcpm_finetune.py 自己的参数（训练脚本，不是 voxcpm CLI）
+#   --nproc_per_node : torchrun 的参数（PyTorch 分布式启动器，不是 voxcpm CLI）
+#   --logdir         : tensorboard 的参数（不是 voxcpm CLI）
+
 # 方向 1: 某个文档文件写了某 flag，但实测 help 里没有 → 该文件在编造
 # （README 就是这么错的）。覆盖 DOCS 里的每个文件，不止 cli-reference.md——
 # 编造的 flag 一样可能出现在散文页（troubleshooting.md 等）里。
@@ -73,6 +93,7 @@ for docfile in "${DOCS[@]}"; do
   while IFS= read -r f; do
     [ -n "$f" ] || continue
     case " $KNOWN_ABSENT " in *" $f "*) continue ;; esac
+    case " $EXTERNAL_TOOL_FLAGS " in *" $f "*) continue ;; esac
     in_file "$f" "$TMPDIR/live_long" || { echo "FAIL: $docfile 写了 $f，但实测 --help 里没有" >&2; FAIL=1; }
   done < "$TMPDIR/doc_long_current"
 done
