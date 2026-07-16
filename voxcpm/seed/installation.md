@@ -31,6 +31,10 @@ its absence there means fine-tuning workflows are unavailable on this machine.
 
 ## Dependencies
 
+The version floors below are from upstream docs and have not been independently tested
+against on this machine (see "Python version" below for the one number on this page that
+has).
+
 - **PyTorch ≥ 2.5.0** — required.
 - **CUDA 12.0+** — optional. Only needed for GPU inference; CPU and MPS backends don't need
   it (see `--device` in `voxcpm/cli-reference`).

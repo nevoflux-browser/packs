@@ -23,6 +23,8 @@ possible here.
 
 ## VRAM budget
 
+These figures come from upstream docs and have not been tested against on this machine.
+
 | 模型 | LoRA | 全量 |
 |---|---|---|
 | VoxCPM 1.5 (750M) | ~12GB | ~24GB |

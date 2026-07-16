@@ -32,6 +32,9 @@ literal words spoken in that clip.
 
 ## Reference audio requirements
 
+This requirement comes from upstream docs and hasn't been independently tested on this
+machine.
+
 - At least **5 seconds** of clean recording.
 - If the reference has background noise, add `--denoise` to enhance it before use.
 
@@ -59,8 +62,7 @@ to tell which change caused a given result.
 
 **There is no `--seed` flag on any subcommand.** Running the exact same command twice with
 identical text, identical reference audio, and identical flags is **not guaranteed to
-produce the same audio** — VoxCPM's generation has randomness that the CLI gives you no way
-to pin down.
+produce the same audio** — the CLI gives you no flag to pin outputs down.
 
 Practical consequence: if a particular take sounds good, that specific take is what you have
 — rerunning the same command is a new roll, not a way to reproduce it. If you need a

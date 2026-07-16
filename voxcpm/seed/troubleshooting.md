@@ -3,6 +3,9 @@
 For the authoritative CLI flag table, see `voxcpm/cli-reference`. For install steps, see
 `voxcpm/installation`. Each entry below is symptom -> cause -> fix.
 
+Specific numbers below (VRAM figures, community-build names) are carried over from upstream
+docs and have not been independently tested on this machine unless a section says otherwise.
+
 ## The one rule that overrides your instincts
 
 **`python -c "import voxcpm"` failing does NOT mean voxcpm is unavailable.**
@@ -58,10 +61,13 @@ triton-windows community build if you need the optimized path.
 
 ## Audio backend / audio loading errors
 
-**Cause:** FFmpeg isn't installed at the system level, or torchaudio is too old.
+**Cause:** FFmpeg isn't installed at the system level, or torchaudio and torch versions are
+mismatched.
 
-**Fix:** Install FFmpeg system-wide (see `voxcpm/installation`). Also make sure torchaudio is
-≥ 2.9.
+**Fix:** Install FFmpeg system-wide (see `voxcpm/installation`). torchaudio pins to a specific
+torch release (torchaudio X.Y requires torch X.Y), so check `pip show torch torchaudio` for a
+mismatch rather than assuming either one needs a specific minimum version — this pack's
+reference environment runs torch 2.6.0+cu124 with torchaudio 2.6.0+cu124 with no issues.
 
 ## Model download failures
 
