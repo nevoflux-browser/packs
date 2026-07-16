@@ -53,6 +53,46 @@ against your manifest before starting any training job; catching a malformed man
 costs seconds, catching it after a training run has started costs however long that run has
 been going.
 
+### What the output actually looks like
+
+Verified against voxcpm 2.0.3, run against a one-line manifest whose `audio` path does not
+exist on disk:
+
+```
+============================================================
+  VoxCPM Training Data Validation Report
+============================================================
+  Manifest : train.jsonl
+  Samples  : 0/1 valid
+
+  Text Length Statistics (characters):
+    Range    : 2 - 2
+    Mean     : 2
+
+  ERRORS (1):
+    x Line 1: Audio file not found: /path/to/a.wav
+
+============================================================
+  FAILED: Fix errors above before starting training.
+============================================================
+```
+
+Exit code is `1` on failure (a manifest with any invalid sample), `0` when every sample is
+valid. This confirms `validate` actually opens and checks each audio file — it is not just a
+JSON-syntax check. Read the report top to bottom:
+
+- `Samples : N/M valid` — if `N < M`, at least one line failed; scroll to `ERRORS` for which
+  ones and why.
+- Each error line is `Line <n>: <reason>` — `<n>` is the 1-indexed line number in the JSONL
+  file, so you can jump straight to the offending sample.
+- A clean run prints `Samples : M/M valid` and no `ERRORS` section, with a `PASSED` banner in
+  place of `FAILED` instead.
+
+(The banner rendered `Range : 2 - 2` with a mangled dash character and the leading error
+marker as a bare `x` in this environment — likely a non-UTF-8 terminal code page swallowing
+a Unicode en-dash/✗ the tool actually emits. Don't treat those two glyphs as meaningful
+content; the structure and wording around them is what to rely on.)
+
 ## Audio and transcript quality
 
 Audio quality and transcript accuracy directly affect convergence. A manifest that passes
