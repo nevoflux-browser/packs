@@ -76,8 +76,10 @@ voxcpm [-h] [--input INPUT] [--output-dir OUTPUT_DIR] [--text TEXT]
 *loading the denoiser model at all*. They act on different things and can in principle both
 appear.
 
-`design` and `batch` both require `--output` / `--output-dir` respectively to be supplied
-(argparse marks them required in the subcommand parsers); `clone` requires `--output`.
+`design` requires `--output`; `clone` requires `--output`; `batch` requires **both**
+`--input` and `--output-dir` (argparse marks them required in the subcommand parsers — the
+`batch --help` usage line shows `--input INPUT --output-dir OUTPUT_DIR` with no brackets
+around either).
 
 ## LoRA inference flags (`design`, `clone`, `batch`)
 
