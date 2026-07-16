@@ -145,6 +145,7 @@ vite.config.ts.timestamp-*
 CLAUDE.md
 .claude
 docs/plans/
+docs/superpowers/
 *.plan
 *_plan.md
 findings.md
