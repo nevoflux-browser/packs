@@ -66,7 +66,7 @@ exist on disk:
   Samples  : 0/1 valid
 
   Text Length Statistics (characters):
-    Range    : 2 - 2
+    Range    : 2 — 2
     Mean     : 2
 
   ERRORS (1):
@@ -88,10 +88,10 @@ JSON-syntax check. Read the report top to bottom:
 - A clean run prints `Samples : M/M valid` and no `ERRORS` section, with a `PASSED` banner in
   place of `FAILED` instead.
 
-(The banner rendered `Range : 2 - 2` with a mangled dash character and the leading error
-marker as a bare `x` in this environment — likely a non-UTF-8 terminal code page swallowing
-a Unicode en-dash/✗ the tool actually emits. Don't treat those two glyphs as meaningful
-content; the structure and wording around them is what to rely on.)
+(Re-verified under a UTF-8 terminal (`PYTHONIOENCODING=utf-8 PYTHONUTF8=1`): the em-dash in
+`Range : 2 — 2` renders correctly, confirming the earlier ASCII-hyphen capture was a terminal
+encoding artifact, not the tool's real output. The leading error marker is a literal ASCII
+`x`, not a mangled Unicode glyph — it renders the same under UTF-8.)
 
 ## Audio and transcript quality
 
