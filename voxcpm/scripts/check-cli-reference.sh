@@ -1,17 +1,28 @@
 #!/bin/bash
-# check-cli-reference.sh — 双向比对 seed/cli-reference.md 与实测 voxcpm --help。
+# check-cli-reference.sh — 校验本 pack 全部文档只提到真实存在的 CLI flag，双向比对
+# seed/cli-reference.md 的别名配对与实测 voxcpm --help。
 #
 # 上游 README 记载了实际不存在的 flag（--seed / --timestamps）。本脚本确保本 pack
-# 的文档只描述真实存在的 flag，且「已知不存在」清单不会悄悄过期。同时校验短别名
-# （-t/-o/-i/-od/-ra/-pa/-pt/-m/-v）与其对应长 flag 的配对，防止别名写错或挂错命令。
+# 的文档只描述真实存在的 flag，且「已知不存在」清单不会悄悄过期。长 flag 存在性检查
+# 覆盖 seed/*.md 与 skills/*/SKILL.md 的全部文件——不止 cli-reference.md，因为编造的
+# flag 一样可能出现在 troubleshooting.md 之类的散文页里，且同样危险。别名配对检查
+# （-t/-o/-i/-od/-ra/-pa/-pt/-m/-v 与其长 flag 的配对）只对 cli-reference.md 的表格
+# 格式有意义，继续只作用于该文件，不强加到散文页上。
 #
 # 用法: bash voxcpm/scripts/check-cli-reference.sh
 # 退出: 0 = 一致, 1 = 不一致, 2 = 环境不可用（无法校验）
 
 set -uo pipefail
 cd "$(dirname "$0")/.." || exit 2
-DOC="seed/cli-reference.md"
-[ -f "$DOC" ] || { echo "FAIL: $DOC 不存在" >&2; exit 1; }
+CLI_DOC="seed/cli-reference.md"
+[ -f "$CLI_DOC" ] || { echo "FAIL: $CLI_DOC 不存在" >&2; exit 1; }
+
+# 校验长 flag 存在性的文件集合：全部 seed 页 + 全部技能页。nullglob 防止目录为空
+# （如 skills/voxcpm/、skills/voxcpm-finetune/ 目前还没有 SKILL.md）时把字面 glob
+# 字符串当成文件名。
+shopt -s nullglob
+DOCS=(seed/*.md skills/*/SKILL.md)
+shopt -u nullglob
 
 command -v voxcpm >/dev/null 2>&1 || {
   echo "SKIP: voxcpm 不在 PATH 上，无法校验 flag。此检查需要可用的 VoxCPM 环境。" >&2
@@ -44,9 +55,8 @@ extract_pairs_live() { grep -oE -- '--[a-z][a-z0-9-]*, -[a-zA-Z][a-zA-Z0-9-]*' "
 extract_pairs_doc()  { grep -oE -- '`--[a-z][a-z0-9-]*`[[:space:]]*\|[[:space:]]*`-[a-zA-Z][a-zA-Z0-9-]*`' "$1" | sed -E 's/`//g; s/[[:space:]]*\|[[:space:]]*/:/' | sort -u; }
 
 extract_long "$LIVE" > "$TMPDIR/live_long"
-extract_long "$DOC"  > "$TMPDIR/doc_long"
 extract_pairs_live "$LIVE" > "$TMPDIR/live_pairs"
-extract_pairs_doc  "$DOC"  > "$TMPDIR/doc_pairs"
+extract_pairs_doc  "$CLI_DOC" > "$TMPDIR/doc_pairs"
 
 # 精确成员判定：-x 整行匹配，避免 --seed 误匹配 --seed-value
 in_file() { grep -qxF -- "$1" "$2"; }
@@ -54,13 +64,18 @@ in_file() { grep -qxF -- "$1" "$2"; }
 FAIL=0
 KNOWN_ABSENT="--seed --timestamps --timestamp-level --timestamp-language --retry-badcase --version"
 
-# 方向 1: 文档写了但实测 help 里没有 → 文档在编造（README 就是这么错的）
+# 方向 1: 某个文档文件写了某 flag，但实测 help 里没有 → 该文件在编造
+# （README 就是这么错的）。覆盖 DOCS 里的每个文件，不止 cli-reference.md——
+# 编造的 flag 一样可能出现在散文页（troubleshooting.md 等）里。
 # 例外: 「已知不存在」清单里的 flag 本就该出现在文档里（作为不存在的记录）
-while IFS= read -r f; do
-  [ -n "$f" ] || continue
-  case " $KNOWN_ABSENT " in *" $f "*) continue ;; esac
-  in_file "$f" "$TMPDIR/live_long" || { echo "FAIL: 文档写了 $f，但实测 --help 里没有" >&2; FAIL=1; }
-done < "$TMPDIR/doc_long"
+for docfile in "${DOCS[@]}"; do
+  extract_long "$docfile" > "$TMPDIR/doc_long_current"
+  while IFS= read -r f; do
+    [ -n "$f" ] || continue
+    case " $KNOWN_ABSENT " in *" $f "*) continue ;; esac
+    in_file "$f" "$TMPDIR/live_long" || { echo "FAIL: $docfile 写了 $f，但实测 --help 里没有" >&2; FAIL=1; }
+  done < "$TMPDIR/doc_long_current"
+done
 
 # 方向 2: 「已知不存在」清单过期 → 上游加了这个 flag，文档该更新
 for f in $KNOWN_ABSENT; do
@@ -83,7 +98,7 @@ while IFS= read -r p; do
 done < "$TMPDIR/live_pairs"
 
 if [ "$FAIL" = 0 ]; then
-  echo "PASS: cli-reference.md 与实测 voxcpm --help 一致"
+  echo "PASS: 全部文档（${#DOCS[@]} 个文件）与实测 voxcpm --help 一致"
   exit 0
 fi
 exit 1
