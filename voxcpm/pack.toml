@@ -1,0 +1,47 @@
+[pack]
+name = "voxcpm"
+namespace = "voxcpm"
+version = "0.1.0"
+protocol = "pack-protocol/0.1"
+min_nevoflux = "0.3.0"
+description = "VoxCPM command-line speech synthesis: voice design from a text prompt, voice cloning from reference audio, batch generation, plus fine-tuning support (manifest prep, validation, config generation)."
+license = "MIT"
+authors = ["NevoFlux"]
+
+[components.skills]
+dir = "skills"
+
+[[components.seed]]
+slug = "voxcpm/cli-reference"
+from = "seed/cli-reference.md"
+
+[[components.seed]]
+slug = "voxcpm/environment"
+from = "seed/environment.md"
+
+[[components.seed]]
+slug = "voxcpm/installation"
+from = "seed/installation.md"
+
+[[components.seed]]
+slug = "voxcpm/troubleshooting"
+from = "seed/troubleshooting.md"
+
+[[components.seed]]
+slug = "voxcpm/synthesis"
+from = "seed/synthesis.md"
+
+[[components.seed]]
+slug = "voxcpm/text-prep"
+from = "seed/text-prep.md"
+
+[[components.seed]]
+slug = "voxcpm/finetune-data"
+from = "seed/finetune-data.md"
+
+[[components.seed]]
+slug = "voxcpm/finetune-config"
+from = "seed/finetune-config.md"
+
+[components.protected]
+prefixes = ["voxcpm/"]
