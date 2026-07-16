@@ -20,18 +20,19 @@ without `-ra`, or `design` from being called with one. Route by what you actuall
 - Only a voice description in words → `design`.
 - An actual reference recording → `clone`.
 
+For how to write `--control` descriptions and cloning style instructions, see
+`voxcpm/text-prep`.
+
 ## High-fidelity cloning
 
 Plain `clone` with just `-ra` gets you *a* similar voice. For closer fidelity, add a prompt
 pair: `--prompt-audio` (`-pa`) plus `--prompt-text` (`-pt`), where the prompt text is the
 **exact transcript** of the prompt audio — not a paraphrase, not what you meant to say, the
-literal words spoken in that clip. A mismatched transcript is worse than no prompt at all,
-because the model is being told the audio says something it doesn't.
+literal words spoken in that clip.
 
 ## Reference audio requirements
 
-- At least **5 seconds** of clean recording. Shorter clips give the model less to match
-  against and cloning quality drops accordingly.
+- At least **5 seconds** of clean recording.
 - If the reference has background noise, add `--denoise` to enhance it before use.
 
 `--denoise` and `--no-denoiser` are unrelated switches, not opposites of the same thing:
@@ -48,7 +49,7 @@ they act on different things and can in principle both appear on the same comman
 
 | Flag | Range | Default | Effect |
 |---|---|---|---|
-| `--cfg-value` | 1.0–3.0 | 2.0 | Higher = output sticks more strictly to the text/control condition (less variation, can sound flatter). Lower = more variation and expressiveness, at the cost of adherence. |
+| `--cfg-value` | 1.0–3.0 | 2.0 | Higher = output sticks more strictly to the text/control condition (less variation). Lower = more variation and expressiveness, at the cost of adherence. |
 | `--inference-timesteps` | 4–30 | 10 | More steps = better detail, but slower generation. Fewer steps = faster, coarser output. |
 
 Start at the defaults and move one parameter at a time — moving both together makes it hard
