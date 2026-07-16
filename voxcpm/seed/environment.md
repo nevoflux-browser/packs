@@ -46,12 +46,14 @@ in some other, currently-active environment) is the only reliable way to confirm
 ## How to re-probe
 
 1. Locate the `voxcpm` executable: `where voxcpm` (Windows) or `which voxcpm` (POSIX).
-2. Read the shim's shebang/launcher line to find the bound interpreter — on Windows this is
+2. Run `voxcpm --help` (not `--version` — that flag does not exist). This is the test: if it
+   succeeds, the environment is usable, full stop, regardless of which Python is bound to the
+   shim. If it fails, go to step 3 to diagnose why.
+3. Read the shim's shebang/launcher line to find the bound interpreter — on Windows this is
    embedded in the `.exe` shim; on POSIX it's the `#!/path/to/python` line at the top of the
-   script.
-3. Run `voxcpm --help` (not `--version` — that flag does not exist) to confirm the CLI is
-   actually reachable.
-4. Query version/torch/CUDA/Python using the bound interpreter found in step 2, not
+   script. This is needed either to run the version query in step 4, or to diagnose a failed
+   `--help` from step 2 (see `voxcpm/troubleshooting`).
+4. Query version/torch/CUDA/Python using the bound interpreter found in step 3, not
    whatever `python` currently resolves to on `PATH`.
 5. Check for a source checkout (needed for fine-tuning) by looking for a directory containing
    `scripts/` and `conf/` alongside a VoxCPM `pyproject.toml` or `.git`.
