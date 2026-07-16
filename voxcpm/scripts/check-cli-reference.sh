@@ -9,9 +9,10 @@
 # （-t/-o/-i/-od/-ra/-pa/-pt/-m/-v 与其长 flag 的配对）只对 cli-reference.md 的表格
 # 格式有意义，继续只作用于该文件，不强加到散文页上。
 #
-# 微调页面里的真实训练/启动/监控命令会带其他工具自己的 flag（训练脚本的
-# --config_path、torchrun 的 --nproc_per_node、tensorboard 的 --logdir）——这些不是
-# voxcpm 编造的 flag，靠 EXTERNAL_TOOL_FLAGS 白名单逐条豁免（定义处有逐条说明）。
+# 微调页面（seed/finetune-config.md）里的真实训练/启动/监控命令会带其他工具自己的
+# flag（训练脚本的 --config_path、torchrun 的 --nproc_per_node、tensorboard 的
+# --logdir）——这些不是 voxcpm 编造的 flag，靠 EXTERNAL_TOOL_FLAGS 白名单逐条豁免，
+# 且只对该文件生效（定义处有逐条说明及作用域收窄的理由），不放行到其他 seed 页。
 #
 # 用法: bash voxcpm/scripts/check-cli-reference.sh
 # 退出: 0 = 一致, 1 = 不一致, 2 = 环境不可用（无法校验）
@@ -73,12 +74,22 @@ in_file() { grep -qxF -- "$1" "$2"; }
 FAIL=0
 KNOWN_ABSENT="--seed --timestamps --timestamp-level --timestamp-language --retry-badcase --version"
 
-# 外部工具 flag 白名单：微调页面（finetune-config.md 等）必须给出真实可运行的训练/
-# 启动/监控命令，这些命令天然携带其他命令行工具自己的 flag，不是 voxcpm 编造的 flag。
-# 校验器只认识 voxcpm --help 的输出，看到这些会误判成「文档编造了 flag」，所以在此
-# 逐条登记豁免，并写清每条属于哪个工具、为什么会出现在 voxcpm 的文档里。
+# 外部工具 flag 白名单：微调页面需要给出真实可运行的训练/启动/监控命令，这些命令
+# 天然携带其他命令行工具自己的 flag，不是 voxcpm 编造的 flag。校验器只认识 voxcpm
+# --help 的输出，看到这些会误判成「文档编造了 flag」，所以在此逐条登记豁免，并写清
+# 每条属于哪个工具、为什么会出现在 voxcpm 的文档里。
 # 这份清单要尽量精确：只列真正属于外部工具、且不与任何 voxcpm 自身 flag 同名的项，
 # 不能用通配豁免，否则会把编造的 voxcpm flag 也一起放过。
+#
+# 作用域：只对 seed/finetune-config.md 生效，不是全局豁免。三条 flag 目前确实只
+# 出现在这一个文件里（已用 grep 核实）；其中 --logdir 是纯小写、不含下划线的单词，
+# 恰好是 voxcpm 未来最可能采用的 flag 命名风格（voxcpm 自身 flag 全部连字符命名，
+# 见上方 extract_long 的注释）。若把它列为全局豁免，一旦 voxcpm 日后真的新增了
+# --logdir，或有人把它误写进其他 seed 页，全局豁免会让校验器对其余文件也一并放行，
+# 掩盖本该触发的 FAIL——这正好是本脚本存在的意义。与下方别名配对检查同理（那项检查
+# 只对 cli-reference.md 的表格格式有意义，因此只作用于该文件），把豁免收窄到确实
+# 需要它的文件，而不是让口子开得比需要的大。
+EXTERNAL_TOOL_DOC="seed/finetune-config.md"
 EXTERNAL_TOOL_FLAGS="--config_path --nproc_per_node --logdir"
 #   --config_path    : scripts/train_voxcpm_finetune.py 自己的参数（训练脚本，不是 voxcpm CLI）
 #   --nproc_per_node : torchrun 的参数（PyTorch 分布式启动器，不是 voxcpm CLI）
@@ -93,7 +104,9 @@ for docfile in "${DOCS[@]}"; do
   while IFS= read -r f; do
     [ -n "$f" ] || continue
     case " $KNOWN_ABSENT " in *" $f "*) continue ;; esac
-    case " $EXTERNAL_TOOL_FLAGS " in *" $f "*) continue ;; esac
+    if [ "$docfile" = "$EXTERNAL_TOOL_DOC" ]; then
+      case " $EXTERNAL_TOOL_FLAGS " in *" $f "*) continue ;; esac
+    fi
     in_file "$f" "$TMPDIR/live_long" || { echo "FAIL: $docfile 写了 $f，但实测 --help 里没有" >&2; FAIL=1; }
   done < "$TMPDIR/doc_long_current"
 done
