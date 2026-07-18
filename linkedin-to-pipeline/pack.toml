@@ -1,0 +1,35 @@
+[pack]
+name = "linkedin-to-pipeline"
+namespace = "linkedin-to-pipeline"
+version = "0.1.0"
+protocol = "pack-protocol/0.1"
+min_nevoflux = "0.3.0"
+description = "Turn LinkedIn into a systematic content-to-pipeline engine. A brand-profile foundation and a configurable idea-sources page plus skills for calendar planning (70/20/10 funnel across a 90-day arc), targeted idea mining, post writing, review, publishing handoff, repurposing, and weekly review — with protected seed pages for your brand profile, idea sources, idea backlog, calendar, and review log."
+license = "MIT"
+authors = ["doris"]
+
+[components.skills]
+dir = "skills"
+
+[[components.seed]]
+slug = "linkedin-to-pipeline/brand-profile"
+from = "seed/brand-profile.md"
+
+[[components.seed]]
+slug = "linkedin-to-pipeline/idea-sources"
+from = "seed/idea-sources.md"
+
+[[components.seed]]
+slug = "linkedin-to-pipeline/idea-backlog"
+from = "seed/idea-backlog.md"
+
+[[components.seed]]
+slug = "linkedin-to-pipeline/content-calendar"
+from = "seed/content-calendar.md"
+
+[[components.seed]]
+slug = "linkedin-to-pipeline/weekly-review-log"
+from = "seed/weekly-review-log.md"
+
+[components.protected]
+prefixes = ["linkedin-to-pipeline/"]
