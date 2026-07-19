@@ -1,7 +1,7 @@
 [pack]
 name = "linkedin-to-pipeline"
 namespace = "linkedin-to-pipeline"
-version = "0.1.0"
+version = "0.2.0"
 protocol = "pack-protocol/0.1"
 min_nevoflux = "0.3.0"
 description = "Turn LinkedIn into a systematic content-to-pipeline engine. A brand-profile foundation and a configurable idea-sources page plus skills for calendar planning (70/20/10 funnel across a 90-day arc), targeted idea mining, post writing, review, publishing handoff, repurposing, and weekly review — with protected seed pages for your brand profile, idea sources, idea backlog, calendar, and review log."
