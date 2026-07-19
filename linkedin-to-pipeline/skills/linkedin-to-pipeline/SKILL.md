@@ -79,8 +79,8 @@ When the user isn't sure, default to where they are in the loop: no calendar yet
 ## Where the rules live
 
 - **Static methodology** (read-only) is in this skill's `conventions/`: `funnel.md`,
-  `hooks.md`, `formats.md`, `algorithm.md`, `pipeline.md`, `calendar-arc.md`. Action skills
-  read these on demand.
+  `hooks.md`, `formats.md`, `algorithm.md`, `pipeline.md`, `calendar-arc.md`,
+  `story-mining.md`. Action skills read these on demand.
 - **User overrides** (custom 70/20/10 ratio, own hook words, banned words, cadence/arc length)
   live in `brand-profile`. When a skill reads the methodology, brand-profile values win over
   convention defaults.
