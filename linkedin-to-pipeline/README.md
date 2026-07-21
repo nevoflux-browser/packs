@@ -54,8 +54,3 @@ Content isn't the top of the funnel — it *is* the funnel.
 | `linkedin-to-pipeline/weekly-review-log` | Weekly performance entries + the distilled "What's working". |
 
 All seed pages are protected — uninstalling the pack keeps your data.
-
-## Credits
-
-Methodology distilled from Dan Rosenthal's *"How We Hit $2M ARR in 7 Months With One Channel:
-LinkedIn."* MIT licensed.

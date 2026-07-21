@@ -51,8 +51,3 @@
 | `linkedin-to-pipeline/weekly-review-log` | 每周表现记录 + 蒸馏的「What's working」。 |
 
 所有种子页均受保护——卸载 pack 时保留你的数据。
-
-## 致谢
-
-方法论蒸馏自 Dan Rosenthal 的《How We Hit $2M ARR in 7 Months With One Channel: LinkedIn》。
-MIT 许可证。
